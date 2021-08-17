@@ -13,6 +13,9 @@ const schemaDefinition = {
     password: {
         type: String
     },
+    phoneNumber: {
+        type: String
+    },
     verificationCode: {
         type: String,
         default: "QZ9DKRL43KHJFW031WWB*"

@@ -34,9 +34,11 @@ router.post("/", IsLoggedIn, function (req, res, next) {
     },
     //Callback function
     async (err, goals) => {
+      console.log(speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}));
       if (err) {
         console.log(err);
-      } else if (speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}) != req.body.verificationCode) {
+      } 
+      else if (speakeasy.totp.verify({secret: req.user.verificationCode, encoding: "base32", token: req.body.verificationCode, window: 0})) {
         req.user.verificationAttempts += 1;
         try {
           await req.user.save();
@@ -93,9 +95,9 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
     text: "Your validation code is "+speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}),
   };
   //Send email
-  transporter.sendMail(mailOptions, function (error, info) {
+  transporter.sendMail(mailOptions, function (err, info) {
     if (error) {
-      console.log(error);
+      console.log(err);
     } else {
       console.log("Email sent: " + info.response);
     }
