@@ -1,0 +1,43 @@
+<section>
+  <h1>{{title}}</h1>
+  <p>Select how you want to receive your authentication code</p>
+  <br />
+  <form method="POST">
+    <div class="row form-group" style="
+    margin-left: auto;
+    margin-right: auto;
+    width: 17em">
+      <input
+        type="text"
+        class="form-control"
+        id="verificationCode"
+        name="verificationCode"
+        placeholder="Enter verification code"
+        style="text-align: center; width: 200px;}"
+      />
+      <button
+        type="submit"
+        class="btn btn-dark font-weight-normal"
+      >Verify</button>
+    </div>
+  </form>
+  <br />
+  <div class="row text-center">
+    <div class="col">
+      <a
+        class="btn btn-dark font-weight-normal"
+        href="/2f-authentication/email"
+        type="button"
+      >Send me the code by Email</a>
+    </div>
+    <div class="col">
+      <a
+        class="btn btn-dark font-weight-normal"
+        href="/2f-authentication/sms"
+        type="button"
+      >Send me the code by SMS</a>
+    </div>
+  </div>
+  <br>
+  <p class="error">{{failureValidation}}</p>
+</section>

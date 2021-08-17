@@ -1,0 +1,70 @@
+body {
+  background-color: grey !important;
+}
+
+section {
+  margin: auto;
+  width: 30%;
+}
+
+nav {
+  height: 80px;
+  border-bottom: 1px solid white;
+}
+
+main a {
+  color: rgb(50,50,50);
+  font-weight: 700;
+}
+
+main a:hover {
+  color: rgb(50,50,50);
+  font-weight: 700;
+  opacity: 0.5;
+}
+
+nav div a {
+  color: white;
+  padding-left: 30px;
+}
+
+nav div a:hover {
+  color: white;
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+main {
+  margin: 150 150 150 150;
+}
+
+h1, p {
+  text-align: center;
+}
+
+label {
+  font-weight: 500;
+}
+
+input {
+  max-width: 300px;
+}
+
+footer {
+  height: 80px;
+  display: block;
+  border-top: 1px solid white;
+}
+
+footer p {
+  padding-top: 5px;
+}
+
+.account {
+  text-align: right;
+}
+
+.error {
+  color: firebrick;
+  font-weight: 500;
+}

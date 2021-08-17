@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <link rel="icon" type="image/png" href="/images/logo.PNG"/>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar p-1 fixed-top bg-dark text-white">
+        <div>
+          <a href="/">My 2F Authentication App</a>
+        </div>
+        <div>
+          {{#if user}}
+          <a class="account" href="#">{{user.username}}</a>
+          <a class="account" href="/logout">Logout</a>
+          {{else}}
+          <a class="account" href="/login">Login</a>
+          <a class="account" href="/sign-up">Sign Up</a>
+          {{/if}}
+        </div>
+      </nav>
+    </header>
+    <main>
+      {{{body}}}
+    </main>
+    <footer class="footer p-1 fixed-bottom bg-dark text-white text-center">
+      <p>&copy; 2021 | My 2F Authentication App - All rights reserved</p>
+    </footer>
+  </body>
+</html>

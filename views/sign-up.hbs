@@ -1,0 +1,42 @@
+<section>
+  <h1>{{title}}</h1>
+  <p>Enter the information bellow and click the submit button to create your Account.</p>
+  <form method="POST">
+    <fieldset class="form-group">
+      <label for="username">Create Username</label>
+      <input
+        type="email"
+        class="form-control"
+        id="username"
+        name="username"
+        placeholder="email@example.com"
+        value="{{username}}"
+      />
+    </fieldset>
+    <fieldset class="form-group">
+      <label for="password">Create Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        value="{{password}}"
+      />
+    </fieldset>
+    <fieldset class="form-group">
+      <label for="confirmpassword">Confirm Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="confirmpassword"
+        name="confirmpassword"
+        value="{{confirmpassword}}"
+      ></input>
+    </fieldset>
+    <br>
+    <button type="submit" class="btn btn-dark">Submit</button>
+    <br>
+    <br>
+    <p class="error">{{validation}}</p>
+  </form>
+</section>
