@@ -88,7 +88,7 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
   //Set up email options
   const mailOptions = {
     from: '"2F Auth"<2f.auth.tutorial@gmail.com>',
-    to: "caiocarminatti@gmail.com",
+    to: req.user.username,
     subject: "2-F Authentication Tutorial",
     text: "Your validation code is "+speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}),
   };
