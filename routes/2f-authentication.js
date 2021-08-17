@@ -90,7 +90,7 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
     from: '"2F Auth"<2f.auth.tutorial@gmail.com>',
     to: "caiocarminatti@gmail.com",
     subject: "2-F Authentication Tutorial",
-    text: req.user.verificationCode,
+    text: "Your validation code is "+speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}),
   };
   //Send email
   transporter.sendMail(mailOptions, function (error, info) {
