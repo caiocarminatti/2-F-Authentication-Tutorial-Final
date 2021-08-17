@@ -45,7 +45,7 @@ router.post("/", function (req, res, next) {
                   title: "Sign Up",
                   validation: "Passwords do not match!",
                   username: req.body.username,
-                  username: req.body.phonenumber,
+                  phonenumber: req.body.phonenumber,
                   password: req.body.password,
                   confirmpassword: req.body.confirmpassword,
                 });
@@ -55,7 +55,7 @@ router.post("/", function (req, res, next) {
                 title: "Sign Up",
                 validation: "Password cannot be empty!",
                 username: req.body.username,
-                username: req.body.phonenumber,
+                phonenumber: req.body.phonenumber,
                 password: req.body.password,
                 confirmpassword: req.body.confirmpassword,
               });
@@ -65,7 +65,7 @@ router.post("/", function (req, res, next) {
               title: "Sign Up",
               validation: "Phone Number cannot be empty!",
               username: req.body.username,
-              username: req.body.phonenumber,
+              phonenumber: req.body.phonenumber,
               password: req.body.password,
               confirmpassword: req.body.confirmpassword,
             });
@@ -75,7 +75,7 @@ router.post("/", function (req, res, next) {
             title: "Sign Up",
             validation: "Username cannot be empty!",
             username: req.body.username,
-            username: req.body.phonenumber,
+            phonenumber: req.body.phonenumber,
             password: req.body.password,
             confirmpassword: req.body.confirmpassword,
           });
@@ -85,7 +85,7 @@ router.post("/", function (req, res, next) {
           title: "Sign Up",
           validation: "Username already exists!",
           username: req.body.username,
-          username: req.body.phonenumber,
+          phonenumber: req.body.phonenumber,
           password: req.body.password,
           confirmpassword: req.body.confirmpassword,
         });
