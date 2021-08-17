@@ -20,6 +20,9 @@ function IsLoggedIn(req, res, next) {
 
 //GET handler for 2f authentication page.
 router.get("/", IsLoggedIn, function (req, res, next) {
+  console.log(
+    speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" })
+  );
   res.render("2f-authentication", {
     title: "Authentication Step",
     user: req.user,
@@ -34,11 +37,22 @@ router.post("/", IsLoggedIn, function (req, res, next) {
     },
     //Callback function
     async (err, goals) => {
-      console.log(speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}));
+      console.log(
+        speakeasy.totp({
+          secret: req.user.verificationCode,
+          encoding: "base32",
+        })
+      );
       if (err) {
         console.log(err);
-      } 
-      else if (speakeasy.totp.verify({secret: req.user.verificationCode, encoding: "base32", token: req.body.verificationCode, window: 0})) {
+      } else if (
+        !speakeasy.totp.verify({
+          secret: req.user.verificationCode,
+          encoding: "base32",
+          token: req.body.verificationCode,
+          window: 0,
+        })
+      ) {
         req.user.verificationAttempts += 1;
         try {
           await req.user.save();
@@ -71,9 +85,12 @@ router.post("/", IsLoggedIn, function (req, res, next) {
 router.get("/email", IsLoggedIn, function (req, res, next) {
   req.user.verificationCode = speakeasy.generateSecret({ length: 20 }).base32;
   req.user.save();
-  console.log(speakeasy.totp({
-    secret: req.user.verificationCode,
-    encoding: "base32"}));
+  console.log(
+    speakeasy.totp({
+      secret: req.user.verificationCode,
+      encoding: "base32",
+    })
+  );
 
   //Create nodemailer transporter
   const transporter = nodemailer.createTransport({
@@ -92,7 +109,9 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
     from: '"2F Auth"<2f.auth.tutorial@gmail.com>',
     to: req.user.username,
     subject: "2-F Authentication Tutorial",
-    text: "Your validation code is "+speakeasy.totp({secret: req.user.verificationCode, encoding: "base32"}),
+    text:
+      "Your validation code is " +
+      speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" }),
   };
   //Send email
   transporter.sendMail(mailOptions, function (err, info) {
@@ -107,7 +126,45 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
 
 //GET handler for 2f authentication page/sms.
 router.get("/sms", IsLoggedIn, function (req, res, next) {
-  res.redirect("/2f-authentication");
+  req.user.verificationCode = speakeasy.generateSecret({ length: 20 }).base32;
+  req.user.save();
+  console.log(
+    speakeasy.totp({
+      secret: req.user.verificationCode,
+      encoding: "base32",
+    })
+  );
+
+  //Import Vonage API Key
+  const Vonage = require("@vonage/server-sdk");
+
+  //Api key Initializer
+  const vonage = new Vonage({
+    apiKey: "3d65bb04",
+    apiSecret: "LoJTd2ERecMV8j3p",
+  });
+  //Set up sms options
+  const from = "180045878";
+  const to = req.user.phoneNumber;
+  const text =
+    "Your validation code is " +
+    speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" });
+
+  //Send sms
+  vonage.message.sendSms(from, to, text, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if (info.messages[0]["status"] === "0") {
+        console.log("Message sent successfully.");
+      } else {
+        console.log(
+          `Message failed with error: ${info.messages[0]["error-text"]}`
+        );
+      }
+    }
+    res.redirect("/2f-authentication");
+  });
 });
 
 module.exports = router;
