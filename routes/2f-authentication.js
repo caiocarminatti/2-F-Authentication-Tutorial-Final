@@ -10,6 +10,9 @@ var nodemailer = require("nodemailer");
 //Import user model into router
 const User = require("../models/user");
 
+//Import Vonage API Key
+const Vonage = require("@vonage/server-sdk");
+
 //Handle users that are not authenticated.
 function IsLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
@@ -20,17 +23,14 @@ function IsLoggedIn(req, res, next) {
 
 //GET handler for 2f authentication page.
 router.get("/", IsLoggedIn, function (req, res, next) {
-  console.log(
-    speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" })
-  );
   res.render("2f-authentication", {
     title: "Authentication Step",
     user: req.user,
   });
 });
 
-//POST handler for 2f authentication page.
-router.post("/", IsLoggedIn, function (req, res, next) {
+ //POST handler for 2f authentication page.
+ router.post("/", IsLoggedIn, function (req, res, next) {
   User.find(
     {
       username: req.user.username,
@@ -83,16 +83,11 @@ router.post("/", IsLoggedIn, function (req, res, next) {
 
 //GET handler for 2f authentication page/email.
 router.get("/email", IsLoggedIn, function (req, res, next) {
+  //Create token and save it to the database - default length 32
   req.user.verificationCode = speakeasy.generateSecret({ length: 20 }).base32;
   req.user.save();
-  console.log(
-    speakeasy.totp({
-      secret: req.user.verificationCode,
-      encoding: "base32",
-    })
-  );
 
-  //Create nodemailer transporter
+  //Create nodemailer transporter (the way that nodemailer use to send emails)
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -109,10 +104,12 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
     from: '"2F Auth"<2f.auth.tutorial@gmail.com>',
     to: req.user.username,
     subject: "2-F Authentication Tutorial",
+    //Time-based one-time password
     text:
       "Your validation code is " +
       speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" }),
   };
+  //https://myaccount.google.com/u/0/lesssecureapps
   //Send email
   transporter.sendMail(mailOptions, function (err, info) {
     if (error) {
@@ -128,15 +125,6 @@ router.get("/email", IsLoggedIn, function (req, res, next) {
 router.get("/sms", IsLoggedIn, function (req, res, next) {
   req.user.verificationCode = speakeasy.generateSecret({ length: 20 }).base32;
   req.user.save();
-  console.log(
-    speakeasy.totp({
-      secret: req.user.verificationCode,
-      encoding: "base32",
-    })
-  );
-
-  //Import Vonage API Key
-  const Vonage = require("@vonage/server-sdk");
 
   //Api key Initializer
   const vonage = new Vonage({
@@ -144,27 +132,26 @@ router.get("/sms", IsLoggedIn, function (req, res, next) {
     apiSecret: "LoJTd2ERecMV8j3p",
   });
   //Set up sms options
-  const from = "180045878";
+  const from = "15815336643";
   const to = req.user.phoneNumber;
   const text =
     "Your validation code is " +
     speakeasy.totp({ secret: req.user.verificationCode, encoding: "base32" });
 
-  //Send sms
-  vonage.message.sendSms(from, to, text, (error, info) => {
-    if (error) {
-      console.log(error);
+  vonage.message.sendSms(from, to, text, (err, responseData) => {
+    if (err) {
+      console.log(err);
     } else {
-      if (info.messages[0]["status"] === "0") {
+      if (responseData.messages[0]["status"] === "0") {
         console.log("Message sent successfully.");
       } else {
         console.log(
-          `Message failed with error: ${info.messages[0]["error-text"]}`
+          `Message failed with error: ${responseData.messages[0]["error-text"]}`
         );
       }
     }
-    res.redirect("/2f-authentication");
   });
+  res.redirect("/2f-authentication");
 });
 
 module.exports = router;
